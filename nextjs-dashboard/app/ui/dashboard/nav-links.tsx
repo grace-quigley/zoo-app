@@ -24,7 +24,7 @@ const links = [
   },
   { name: 'Inventory', href: '/dashboard/inventory', icon: ServerIcon},
   { name: 'Pets', href: '/dashboard/pets', icon: BugAntIcon },
-  { name: 'Money Management', href: '/dashboard/money-management', icon: WalletIcon },
+  { name: 'Money Management', href: '/dashboard/money', icon: WalletIcon },
   { name: 'Users', href: '/dashboard/users', icon: UserGroupIcon },
 
 ];

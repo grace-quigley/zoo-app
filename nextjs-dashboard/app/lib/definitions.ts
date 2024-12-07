@@ -7,6 +7,7 @@ export type User = {
   name: string;
   email: string;
   password: string;
+  image_url?: string;
 };
 
 export type Customer = {
@@ -26,33 +27,33 @@ export type Invoice = {
   status: 'pending' | 'paid';
 };
 
-export type Revenue = {
+export type Expense = {
   month: string;
-  revenue: number;
+  name: string;
+  expense: number;
 };
 
-export type LatestInvoice = {
+export type LatestReceipt = {
   id: string;
   name: string;
+  description: string;
   image_url: string;
-  email: string;
   amount: string;
 };
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
+export type LatestReceiptRaw = Omit<LatestReceipt, 'amount'> & {
   amount: number;
 };
 
-export type InvoicesTable = {
+export type ReceiptsTable = {
   id: string;
-  customer_id: string;
+  user_id: string;
   name: string;
-  email: string;
   image_url: string;
   date: string;
   amount: number;
-  status: 'pending' | 'paid';
+  description: string;
 };
 
 export type CustomersTableType = {
@@ -75,14 +76,15 @@ export type FormattedCustomersTable = {
   total_paid: string;
 };
 
-export type CustomerField = {
+export type UserField = {
   id: string;
   name: string;
 };
 
-export type InvoiceForm = {
+export type ReceiptForm = {
   id: string;
-  customer_id: string;
+  user_id: string;
   amount: number;
-  status: 'pending' | 'paid';
+  status: 'pending' | 'upcoming';
+  description: string;
 };

@@ -29,7 +29,7 @@ export function CardsSkeleton() {
   );
 }
 
-export function RevenueChartSkeleton() {
+export function ExpensesChartSkeleton() {
   return (
     <div className={`${shimmer} relative w-full overflow-hidden md:col-span-4`}>
       <div className="mb-4 h-8 w-36 rounded-md bg-gray-100" />
@@ -59,7 +59,7 @@ export function InvoiceSkeleton() {
   );
 }
 
-export function LatestInvoicesSkeleton() {
+export function LatestReceiptsSkeleton() {
   return (
     <div
       className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}
@@ -95,8 +95,8 @@ export default function DashboardSkeleton() {
         <CardSkeleton />
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        <RevenueChartSkeleton />
-        <LatestInvoicesSkeleton />
+        <ExpensesChartSkeleton />
+        <LatestReceiptsSkeleton />
       </div>
     </>
   );
