@@ -46,6 +46,16 @@ export type LatestReceiptRaw = Omit<LatestReceipt, 'amount'> & {
   amount: number;
 };
 
+export type ItemsTable = {
+  id: string;
+  location_id: string;
+  name: string;
+  image_url: string;
+  description: string;
+  quantity: number;
+  tags: string;
+};
+
 export type ReceiptsTable = {
   id: string;
   user_id: string;

@@ -1,6 +1,6 @@
 import Pagination from '@/app/ui/receipts/pagination';
 import Search from '@/app/ui/search';
-import Table from '@/app/ui/receipts/table';
+import ExpensesTable from '@/app/ui/receipts/table';
 import { CreateReceipt } from '@/app/ui/receipts/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
@@ -28,7 +28,7 @@ export default async function Page(props: {
         <CreateReceipt />
       </div>
        <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <ExpensesTable query={query} currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         {/* use-debounce avoids searching on every keystroke */}

@@ -108,6 +108,57 @@ export async function fetchFilteredReceipts(
   }
 }
 
+export async function fetchFilteredItems(
+  query: string,
+  currentPage: number,
+) {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  try {
+    const receipts = await sql<ReceiptsTable>`
+      SELECT
+      items.id,
+        items.name,
+        items.quantity,
+        items.tags,
+        items.image_url,
+        locations.name
+      FROM items
+      JOIN locations ON locations.id = items.location_id
+      WHERE
+        items.name ILIKE ${`%${query}%`} OR
+        items.tags::text ILIKE ${`%${query}%`} OR
+        locations.name::text ILIKE ${`%${query}%`} OR
+        items.description::text ILIKE ${`%${query}%`} 
+      ORDER BY items.name DESC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return receipts.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch items.');
+  }
+}
+
+export async function fetchInventoryPages(query: string) {
+  try {
+    const count = await sql`SELECT COUNT(*)
+    FROM items
+    JOIN locations ON locations.id = location_id
+    WHERE
+      items.name ILIKE ${`%${query}%`} OR
+      items.description ILIKE ${`%${query}%`} OR
+      locations.name::text ILIKE ${`%${query}%`}
+  `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of items.');
+  }
+}
+
 export async function fetchReceiptsPages(query: string) {
   try {
     const count = await sql`SELECT COUNT(*)
