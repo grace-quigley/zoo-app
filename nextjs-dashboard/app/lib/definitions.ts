@@ -47,13 +47,24 @@ export type LatestReceiptRaw = Omit<LatestReceipt, 'amount'> & {
 };
 
 export type ItemsTable = {
-  id: string;
+  item_id: string;
   location_id: string;
-  name: string;
+  location_name: string;
+  item_name: string;
   image_url: string;
   description: string;
   quantity: number;
   tags: string;
+};
+
+
+export type ItemForm = {
+  id: string;
+  location_id: string;
+  quantity: number;
+  name: string;
+  image_url: string;
+  desciprtion: string;
 };
 
 export type ReceiptsTable = {
@@ -87,6 +98,11 @@ export type FormattedCustomersTable = {
 };
 
 export type UserField = {
+  id: string;
+  name: string;
+};
+
+export type LocationField = {
   id: string;
   name: string;
 };

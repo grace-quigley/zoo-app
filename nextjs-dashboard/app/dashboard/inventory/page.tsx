@@ -6,6 +6,7 @@ import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchInventoryPages } from '@/app/lib/data';
+import { CreateItem } from '@/app/ui/inventory/buttons';
  
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -24,8 +25,8 @@ export default async function Page(props: {
         <h1 className={`${lusitana.className} text-2xl`}>Inventory</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        <Search placeholder="Search receipts..." />
-        <CreateReceipt />
+        <Search placeholder="Search items..." />
+        <CreateItem />
       </div>
        <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <InventoryTable query={query} currentPage={currentPage} />

@@ -6,6 +6,9 @@ import {
   ReceiptsTable,
   LatestReceiptRaw,
   Expense,
+  ItemsTable,
+  ItemForm,
+  LocationField,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -114,14 +117,16 @@ export async function fetchFilteredItems(
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   try {
-    const receipts = await sql<ReceiptsTable>`
+    const receipts = await sql<ItemsTable>`
       SELECT
-      items.id,
-        items.name,
+        items.id as item_id,
+        items.name as item_name,
         items.quantity,
+        items.description,
         items.tags,
         items.image_url,
-        locations.name
+        locations.id as location_id,
+        locations.name as location_name
       FROM items
       JOIN locations ON locations.id = items.location_id
       WHERE
@@ -205,6 +210,29 @@ export async function fetchReceiptById(id: string) {
   }
 }
 
+export async function fetchItemById(id: string) {
+  console.log('fetch')
+  try {
+    const data = await sql<ItemForm>`
+      SELECT
+        items.id,
+        items.name,
+        items.location_id,
+        items.quantity,
+        items.image_url,
+        items.description
+      FROM items
+      WHERE items.id = ${id};
+    `;
+
+    const item = data.rows;
+    return item[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch item.');
+  }
+}
+
 export async function fetchUsers() {
   try {
     const data = await sql<UserField>`
@@ -220,6 +248,24 @@ export async function fetchUsers() {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all users.');
+  }
+}
+
+export async function fetchLocations() {
+  try {
+    const data = await sql<LocationField>`
+      SELECT
+        id,
+        name
+      FROM locations
+      ORDER BY name ASC
+    `;
+
+    const locations = data.rows;
+    return locations;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all locations.');
   }
 }
 

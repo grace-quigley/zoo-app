@@ -19,7 +19,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
     replace(`${pathname}?${params.toString()}`);
 
     // only searches when the user stops typing for 300ms
-  }, 300);
+  }, 500);
   return (
     <div className="relative flex flex-1 flex-shrink-0">
       <label htmlFor="search" className="sr-only">

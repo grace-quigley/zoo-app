@@ -3,19 +3,21 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-const FormSchema = z.object({
-    id: z.string(),
-    userId: z.string(),
-    amount: z.coerce.number(),
-    description: z.string(),
-    status: z.enum(['upcoming', 'paid']),
-    date: z.string(),
+
+// RECEIPT ACTIONS
+const ReceiptFormSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  amount: z.coerce.number(),
+  description: z.string(),
+  status: z.enum(['upcoming', 'paid']),
+  date: z.string(),
 })
 
 // TODO: add status to tables
-const CreateReceipt = FormSchema.omit({ id: true, date: true, status: true });
-const EditReceipt = FormSchema.omit({ id: true, date: true, status: true });
-const DeleteReceipt = FormSchema.omit({ id: true, date: true, status: true });
+const CreateReceipt = ReceiptFormSchema.omit({ id: true, date: true, status: true });
+const EditReceipt = ReceiptFormSchema.omit({ id: true, date: true, status: true });
+const DeleteReceipt = ReceiptFormSchema.omit({ id: true, date: true, status: true });
 
 // behind the scenes, react creates a POST API endpoint when using Server Actions
 export async function createReceipt(formData: FormData) {
@@ -26,6 +28,7 @@ export async function createReceipt(formData: FormData) {
       });
     //   best practice store amounts in cents for accuracy in calcs
     const amountInCents = amount * 100;
+    Math.round(amountInCents).toPrecision(15);
     const date = new Date().toISOString().split('T')[0];
 
     await sql`
@@ -44,6 +47,7 @@ export async function updateReceipt(id: string, formData: FormData) {
       });
     //   best practice store amounts in cents for accuracy in calcs
     const amountInCents = amount * 100;
+    Math.round(amountInCents).toPrecision(15);
     const date = new Date().toISOString().split('T')[0];
 
     await sql`
@@ -62,4 +66,59 @@ export async function deleteReceipt(id: string) {
       WHERE id = ${id}
     `;
     revalidatePath('/dashboard/money');
+}
+
+// INVENTORY ACTIONS 
+const ItemFormSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  locationId: z.string(),
+  quantity: z.number(),
+  description: z.string(),
+  imageUrl: z.string()
+})
+const EditItem = ItemFormSchema.omit({ id: true});
+const CreateItem = ItemFormSchema.omit({ id: true});
+
+export async function updateItem(id: string, formData: FormData) {
+  const { locationId, quantity, name, description, imageUrl } = EditItem.parse({
+      locationId: formData.get('locationId'),
+      quantity: Number(formData.get('quantity')),
+      description: formData.get('description'),
+      name: formData.get('name'),
+      imageUrl: formData.get('imageUrl')?.toString()
+    });
+    await sql`
+      UPDATE items
+      SET name = ${name}, quantity = ${quantity},
+      description = ${description}, location_id = ${locationId},
+      image_url = ${imageUrl}
+      WHERE id = ${id}
+    `;
+  revalidatePath('/dashboard/inventory');
+  redirect('/dashboard/inventory');
+}
+
+export async function deleteItem(id: string) {
+  await sql`
+    DELETE FROM items
+    WHERE id = ${id}
+  `;
+  revalidatePath('/dashboard/inventory');
+}
+
+export async function createItem(formData: FormData) {
+  const { locationId, quantity, name, description, imageUrl } = CreateItem.parse({
+    locationId: formData.get('locationId'),
+    quantity: Number(formData.get('quantity')),
+    description: formData.get('description'),
+    name: formData.get('name'),
+    imageUrl: formData.get('imageUrl')?.toString()
+  });
+  await sql`
+    INSERT INTO items (name, location_id, quantity, description, image_url, tags)
+    VALUES (${name}, ${locationId}, ${quantity}, ${description}, ${imageUrl}, '#tag')
+  `;
+  revalidatePath('/dashboard/inventory');
+  redirect('/dashboard/inventory');
 }
