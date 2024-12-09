@@ -1,6 +1,6 @@
 'use client';
 
-import { UserField, ReceiptForm } from '@/app/lib/definitions';
+import { UserField, TransactionForm } from '@/app/lib/definitions';
 import {
   CheckIcon,
   ClockIcon,
@@ -10,19 +10,19 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { updateReceipt } from '@/app/lib/actions';
+import { updateTransaction } from '@/app/lib/actions';
 
-export default function EditReceiptForm({
-  receipt,
+export default function EditTransactionForm({
+  transaction,
   users,
 }: {
-  receipt: ReceiptForm;
+  transaction: TransactionForm;
   users: UserField[];
 }) {
-  const updateReceiptWithId = updateReceipt.bind(null, receipt.id);
+  const updateTransactionWithId = updateTransaction.bind(null, transaction.id);
 
   return (
-    <form action={updateReceiptWithId}>
+    <form action={updateTransactionWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* user Name */}
         <div className="mb-4">
@@ -34,7 +34,7 @@ export default function EditReceiptForm({
               id="user"
               name="userId"
               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue={receipt.user_id}
+              defaultValue={transaction.user_id}
             >
               <option value="" disabled>
                 Select a user
@@ -61,7 +61,7 @@ export default function EditReceiptForm({
                 name="amount"
                 type="number"
                 step="0.01"
-                defaultValue={receipt.amount}
+                defaultValue={transaction.amount}
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               />
@@ -81,7 +81,7 @@ export default function EditReceiptForm({
                 id="description"
                 name="description"
                 type="text"
-                defaultValue={receipt.description}
+                defaultValue={transaction.description}
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               />
               <PencilIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -92,7 +92,7 @@ export default function EditReceiptForm({
         {/* Invoice Status */}
         <fieldset>
           <legend className="mb-2 block text-sm font-medium">
-            Set the receipt status
+            Set the transaction status
           </legend>
           <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
             <div className="flex gap-4">
@@ -139,7 +139,7 @@ export default function EditReceiptForm({
         >
           Cancel
         </Link>
-        <Button type="submit">Edit Receipt</Button>
+        <Button type="submit">Edit transaction</Button>
       </div>
     </form>
   );

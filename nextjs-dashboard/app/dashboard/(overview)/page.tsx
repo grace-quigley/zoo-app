@@ -1,6 +1,6 @@
 import { Card } from '@/app/ui/dashboard/cards';
 import ExpensesChart from '@/app/ui/dashboard/exspense-chart';
-import LatestReceipts from '@/app/ui/dashboard/latest-receipts';
+import LatestReceipts from '@/app/ui/dashboard/latest-transactions';
 import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
 import { ExpensesChartSkeleton, LatestReceiptsSkeleton } from '@/app/ui/skeletons';

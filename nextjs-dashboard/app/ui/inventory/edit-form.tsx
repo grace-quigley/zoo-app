@@ -1,6 +1,6 @@
 'use client';
 
-import { UserField, ReceiptForm, ItemForm, LocationField } from '@/app/lib/definitions';
+import { UserField, TransactionForm, ItemForm, LocationField } from '@/app/lib/definitions';
 import {
   CheckIcon,
   ClockIcon,
@@ -13,7 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { updateItem, updateReceipt } from '@/app/lib/actions';
+import { updateItem, updateTransaction } from '@/app/lib/actions';
 import { UpdateItem } from './buttons';
 
 export default function EditItemForm({

@@ -1,6 +1,6 @@
 import Form from '@/app/ui/inventory/edit-form';
-import Breadcrumbs from '@/app/ui/receipts/breadcrumbs';
-import { fetchItemById, fetchLocations, fetchReceiptById, fetchUsers } from '@/app/lib/data';
+import Breadcrumbs from '@/app/ui/transactions/breadcrumbs';
+import { fetchItemById, fetchLocations, fetchTransactionById, fetchUsers } from '@/app/lib/data';
 import { users } from '@/app/lib/placeholder-data';
  
 export default async function Page(props: { params: Promise<{ id: string }> }) {

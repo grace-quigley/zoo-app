@@ -1,28 +1,28 @@
-import Form from '@/app/ui/receipts/edit-form';
-import Breadcrumbs from '@/app/ui/receipts/breadcrumbs';
-import { fetchReceiptById, fetchUsers } from '@/app/lib/data';
+import Form from '@/app/ui/transactions/edit-form';
+import Breadcrumbs from '@/app/ui/transactions/breadcrumbs';
+import { fetchTransactionById, fetchUsers } from '@/app/lib/data';
 import { users } from '@/app/lib/placeholder-data';
  
 export default async function Page(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
     const id = params.id;
-    const [receipt, users] = await Promise.all([
-      fetchReceiptById(id),
+    const [transaction, users] = await Promise.all([
+      fetchTransactionById(id),
       fetchUsers(),
     ]);
   return (
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Receipts', href: '/dashboard/money' },
+          { label: 'Transactions', href: '/dashboard/money' },
           {
-            label: 'Edit Receipt',
+            label: 'Edit Transaction',
             href: `/dashboard/money/${id}/edit`,
             active: true,
           },
         ]}
       />
-      <Form receipt={receipt} users={users} />
+      <Form transaction={transaction} users={users} />
     </main>
   );
 }

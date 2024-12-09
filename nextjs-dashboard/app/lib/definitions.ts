@@ -33,7 +33,7 @@ export type Expense = {
   expense: number;
 };
 
-export type LatestReceipt = {
+export type LatestTransaction = {
   id: string;
   name: string;
   description: string;
@@ -42,7 +42,7 @@ export type LatestReceipt = {
 };
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestReceiptRaw = Omit<LatestReceipt, 'amount'> & {
+export type LatestTransactionRaw = Omit<LatestTransaction, 'amount'> & {
   amount: number;
 };
 
@@ -67,7 +67,7 @@ export type ItemForm = {
   desciprtion: string;
 };
 
-export type ReceiptsTable = {
+export type TransactionsTable = {
   id: string;
   user_id: string;
   name: string;
@@ -107,10 +107,14 @@ export type LocationField = {
   name: string;
 };
 
-export type ReceiptForm = {
+export type TransactionForm = {
   id: string;
   user_id: string;
   amount: number;
   status: 'pending' | 'upcoming';
   description: string;
 };
+
+export interface CheckedItem extends ItemsTable {
+  checked: boolean
+}

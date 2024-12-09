@@ -8,11 +8,11 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
-import { createReceipt } from '@/app/lib/actions';
+import { createTransaction } from '@/app/lib/actions';
 
 export default function Form({ users }: { users: UserField[] }) {
   return (
-    <form action={createReceipt}>
+    <form action={createTransaction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         <div className="mb-4">
           <label htmlFor="user" className="mb-2 block text-sm font-medium">

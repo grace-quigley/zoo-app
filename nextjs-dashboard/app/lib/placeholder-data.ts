@@ -1,7 +1,7 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
 // https://nextjs.org/learn/dashboard-app/fetching-data
 
-import { Customer, Expense, LatestReceipt, User } from "./definitions";
+import { Customer, Expense, LatestTransaction, User } from "./definitions";
 
 export interface Tag { 
   name: string;

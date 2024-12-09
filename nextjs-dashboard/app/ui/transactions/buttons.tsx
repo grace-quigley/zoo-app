@@ -1,20 +1,20 @@
-import { deleteReceipt } from '@/app/lib/actions';
+import { deleteTransaction } from '@/app/lib/actions';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
-export function CreateReceipt() {
+export function CreateTransaction() {
   return (
     <Link
       href="/dashboard/money/create"
       className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
     >
-      <span className="hidden md:block">Create Receipt</span>{' '}
+      <span className="hidden md:block">Create Transaction</span>{' '}
       <PlusIcon className="h-5 md:ml-4" />
     </Link>
   );
 }
 
-export function UpdateReceipt({ id }: { id: string }) {
+export function UpdateTransaction({ id }: { id: string }) {
   return (
     <Link
       href={`/dashboard/money/${id}/edit`}
@@ -25,8 +25,8 @@ export function UpdateReceipt({ id }: { id: string }) {
   );
 }
 
-export function DeleteReceipt({ id }: { id: string }) {
-  const deleteReceiptWithId = deleteReceipt.bind(null, id);
+export function DeleteTransaction({ id }: { id: string }) {
+  const deleteReceiptWithId = deleteTransaction.bind(null, id);
   return (
     <>
     <form action={deleteReceiptWithId}>

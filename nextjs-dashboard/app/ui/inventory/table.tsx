@@ -1,21 +1,27 @@
-import Image from 'next/image';
-import { UpdateReceipt, DeleteReceipt } from '@/app/ui/receipts/buttons';
-import InvoiceStatus from '@/app/ui/receipts/status';
-import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredItems, fetchFilteredReceipts } from '@/app/lib/data';
+'use client'
+import { fetchFilteredItems } from '@/app/lib/data';
 import { ItemsTable } from '@/app/lib/definitions';
-import { DeleteItem, UpdateItem } from './buttons';
+import {  BuildList, DeleteItem, UpdateItem } from './buttons';
+import ItemRows from './item-rows';
+import { useState } from 'react';
+import { List, ListIcon, MinusCircleIcon, PlusCircleIcon } from 'lucide-react';
+import Link from 'next/link';
 
-export default async function InventoryTable({
-  query,
-  currentPage,
+export default function InventoryTable({
+  items
 }: {
-  query: string;
-  currentPage: number;
+  items: ItemsTable[]
 }) {
-  const items: ItemsTable[] = await fetchFilteredItems(query, currentPage);
-
-  console.log(items);
+  const [selectedItems, setSelectedItems] = useState<ItemsTable[]>([]);
+    const handleSelectionClick = (item: ItemsTable) => {
+        let newSelections;
+        if(selectedItems.filter((selectedItem) => selectedItem.item_id === item.item_id).length > 0) {
+            newSelections = selectedItems.filter((selectedItem) => selectedItem.item_id !== item.item_id)
+        } else { 
+            newSelections = [...selectedItems, item]
+        }
+        setSelectedItems(newSelections);
+    }
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -56,7 +62,7 @@ export default async function InventoryTable({
                   </div>
                   <div className="flex justify-end gap-2">
                     <UpdateItem id={item.item_id} />
-                    {/* <DeleteReceipt id={item.id} /> */}
+                    <DeleteItem id={item.item_id} />
                   </div>
                 </div>
               </div>
@@ -89,6 +95,7 @@ export default async function InventoryTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                 
                     <div className="flex items-center gap-3">
                       {/* <Image
                         src={item.image_url}
@@ -116,12 +123,32 @@ export default async function InventoryTable({
                     <div className="flex justify-end gap-3">
                       <UpdateItem id={item.item_id} />
                       <DeleteItem id={item.item_id} />
+                      <form action={() => {handleSelectionClick(item)}}> 
+                        <button type="submit"className="rounded-md border p-2 hover:bg-gray-100">
+                            <span className="sr-only">Select</span>
+                            {selectedItems.filter((selectedItem) => selectedItem.item_id === item.item_id).length > 0 
+                                ? (<MinusCircleIcon className="w-5" />)
+                                : (<PlusCircleIcon className="w-5"/>)
+                            }
+                        </button>
+                      </form>
                     </div>
                   </td> 
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+      <div className="inline-block min-w-full align-middle">
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+          <button type="submit"className="rounded-md border p-2 hover:bg-gray-100">
+          <Link
+            href="/dashboard/inventory/list"
+          >
+            <ListIcon className="w-5" />
+          </Link>
+        </button>
         </div>
       </div>
     </div>

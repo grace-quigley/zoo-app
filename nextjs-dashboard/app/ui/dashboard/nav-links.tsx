@@ -7,12 +7,14 @@ import {
   DocumentDuplicateIcon,
   ServerIcon,
   WalletIcon,
-  BugAntIcon
+  BugAntIcon,
+  TableCellsIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-
+import { DogIcon, CatIcon, DatabaseIcon, Wallet, LucideArchive, File, PersonStanding, PersonStandingIcon, User, Home } from 'lucide-react'
+import { HomeModernIcon } from '@heroicons/react/24/outline';
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
@@ -20,12 +22,12 @@ const links = [
   {
     name: 'Documents',
     href: '/dashboard/documents',
-    icon: DocumentDuplicateIcon,
+    icon: File,
   },
-  { name: 'Inventory', href: '/dashboard/inventory', icon: ServerIcon},
-  { name: 'Pets', href: '/dashboard/pets', icon: BugAntIcon },
-  { name: 'Money Management', href: '/dashboard/money', icon: WalletIcon },
-  { name: 'Users', href: '/dashboard/users', icon: UserGroupIcon },
+  { name: 'Inventory', href: '/dashboard/inventory', icon: LucideArchive},
+  { name: 'Pets', href: '/dashboard/pets', icon:CatIcon},
+  { name: 'Money', href: '/dashboard/money', icon: Wallet },
+  { name: 'Users', href: '/dashboard/users', icon: User },
 
 ];
 

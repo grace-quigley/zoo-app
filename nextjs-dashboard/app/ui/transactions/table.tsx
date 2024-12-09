@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { UpdateReceipt, DeleteReceipt } from '@/app/ui/receipts/buttons';
-import InvoiceStatus from '@/app/ui/receipts/status';
+import { UpdateTransaction, DeleteTransaction } from '@/app/ui/transactions/buttons';
+import InvoiceStatus from '@/app/ui/transactions/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredReceipts } from '@/app/lib/data';
 
@@ -46,8 +46,8 @@ export default async function ExpensesTable({
                     <p>{formatDateToLocal(receipt.date)}</p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <UpdateReceipt id={receipt.id} />
-                    <DeleteReceipt id={receipt.id} />
+                    <UpdateTransaction id={receipt.id} />
+                    <DeleteTransaction id={receipt.id} />
                   </div>
                 </div>
               </div>
@@ -108,8 +108,8 @@ export default async function ExpensesTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateReceipt id={receipt.id} />
-                      <DeleteReceipt id={receipt.id} />
+                      <UpdateTransaction id={receipt.id} />
+                      <DeleteTransaction id={receipt.id} />
                     </div>
                   </td>
                 </tr>

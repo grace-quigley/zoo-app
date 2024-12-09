@@ -4,8 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
-// RECEIPT ACTIONS
-const ReceiptFormSchema = z.object({
+// TRANSACTION ACTIONS
+const TransactionFormSchema = z.object({
   id: z.string(),
   userId: z.string(),
   amount: z.coerce.number(),
@@ -15,13 +15,13 @@ const ReceiptFormSchema = z.object({
 })
 
 // TODO: add status to tables
-const CreateReceipt = ReceiptFormSchema.omit({ id: true, date: true, status: true });
-const EditReceipt = ReceiptFormSchema.omit({ id: true, date: true, status: true });
-const DeleteReceipt = ReceiptFormSchema.omit({ id: true, date: true, status: true });
+const CreateTransaction = TransactionFormSchema.omit({ id: true, date: true, status: true });
+const EditTransaction = TransactionFormSchema.omit({ id: true, date: true, status: true });
+const DeleteTransaction = TransactionFormSchema.omit({ id: true, date: true, status: true });
 
 // behind the scenes, react creates a POST API endpoint when using Server Actions
-export async function createReceipt(formData: FormData) {
-    const { userId, amount, description } = CreateReceipt.parse({
+export async function createTransaction(formData: FormData) {
+    const { userId, amount, description } = CreateTransaction.parse({
         userId: formData.get('userId'),
         amount: formData.get('amount'),
         description: formData.get('description')
@@ -39,8 +39,8 @@ export async function createReceipt(formData: FormData) {
     redirect('/dashboard/money');
 }
 
-export async function updateReceipt(id: string, formData: FormData) {
-    const { userId, amount, description } = EditReceipt.parse({
+export async function updateTransaction(id: string, formData: FormData) {
+    const { userId, amount, description } = EditTransaction.parse({
         userId: formData.get('userId'),
         amount: formData.get('amount'),
         description: formData.get('description')
@@ -60,7 +60,7 @@ export async function updateReceipt(id: string, formData: FormData) {
     redirect('/dashboard/money');
 }
 
-export async function deleteReceipt(id: string) {
+export async function deleteTransaction(id: string) {
     await sql`
       DELETE FROM receipts
       WHERE id = ${id}
@@ -121,4 +121,9 @@ export async function createItem(formData: FormData) {
   `;
   revalidatePath('/dashboard/inventory');
   redirect('/dashboard/inventory');
+}
+
+
+export async function selectItem(id: string) {
+  return true;
 }

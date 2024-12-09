@@ -1,12 +1,13 @@
-import Pagination from '@/app/ui/receipts/pagination';
+import Pagination from '@/app/ui/transactions/pagination';
 import Search from '@/app/ui/search';
 import InventoryTable from '@/app/ui/inventory/table';
-import { CreateReceipt } from '@/app/ui/receipts/buttons';
+import { CreateTransaction } from '@/app/ui/transactions/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchInventoryPages } from '@/app/lib/data';
+import { fetchFilteredItems, fetchInventoryPages } from '@/app/lib/data';
 import { CreateItem } from '@/app/ui/inventory/buttons';
+import { ItemsTable } from '@/app/lib/definitions';
  
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -18,6 +19,7 @@ export default async function Page(props: {
   const query = await searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
   const totalPages = await fetchInventoryPages(query);
+  const items: ItemsTable[] = await fetchFilteredItems(query, currentPage);
 
   return (
     <div className="w-full">
@@ -29,7 +31,7 @@ export default async function Page(props: {
         <CreateItem />
       </div>
        <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <InventoryTable query={query} currentPage={currentPage} />
+        <InventoryTable items={items} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         {/* use-debounce avoids searching on every keystroke */}

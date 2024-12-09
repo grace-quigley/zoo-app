@@ -2,9 +2,9 @@ import { sql } from '@vercel/postgres';
 import {
   UserField,
   CustomersTableType,
-  ReceiptForm,
-  ReceiptsTable,
-  LatestReceiptRaw,
+  TransactionForm,
+  TransactionsTable,
+  LatestTransactionRaw,
   Expense,
   ItemsTable,
   ItemForm,
@@ -24,7 +24,7 @@ export async function fetchExpenses() {
 
 export async function fetchLatestReceipts() {
   try {
-    const data = await sql<LatestReceiptRaw>`
+    const data = await sql<LatestTransactionRaw>`
       SELECT receipts.amount, receipts.description, users.name, users.image_url, receipts.id
       FROM receipts
       JOIN users ON receipts.user_id = users.id
@@ -85,7 +85,7 @@ export async function fetchFilteredReceipts(
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   try {
-    const receipts = await sql<ReceiptsTable>`
+    const receipts = await sql<TransactionsTable>`
       SELECT
         receipts.id,
         receipts.amount,
@@ -164,7 +164,7 @@ export async function fetchInventoryPages(query: string) {
   }
 }
 
-export async function fetchReceiptsPages(query: string) {
+export async function fetchTransactionsPages(query: string) {
   try {
     const count = await sql`SELECT COUNT(*)
     FROM receipts
@@ -185,9 +185,9 @@ export async function fetchReceiptsPages(query: string) {
   }
 }
 
-export async function fetchReceiptById(id: string) {
+export async function fetchTransactionById(id: string) {
   try {
-    const data = await sql<ReceiptForm>`
+    const data = await sql<TransactionForm>`
       SELECT
         receipts.id,
         receipts.user_id,
@@ -211,7 +211,6 @@ export async function fetchReceiptById(id: string) {
 }
 
 export async function fetchItemById(id: string) {
-  console.log('fetch')
   try {
     const data = await sql<ItemForm>`
       SELECT

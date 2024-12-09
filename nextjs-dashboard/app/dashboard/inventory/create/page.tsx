@@ -1,4 +1,4 @@
-import Breadcrumbs from '@/app/ui/receipts/breadcrumbs';
+import Breadcrumbs from '@/app/ui/transactions/breadcrumbs';
 import { fetchLocations, fetchUsers } from '@/app/lib/data';
 import Form from '@/app/ui/inventory/create-form'; 
 export default async function Page() {
