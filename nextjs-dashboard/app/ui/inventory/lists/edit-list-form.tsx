@@ -1,4 +1,4 @@
-import { ListItems, LocationField, UserField } from '@/app/lib/definitions';
+import { ListItems, ListsTable, LocationField, UserField } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
   CheckIcon,
@@ -13,8 +13,8 @@ import {
 import { Button } from '@/app/ui/button';
 import { createList, updateList } from '@/app/lib/actions';
 
-export default function Form({list}:{list: ListItems[]}) {
-  const updateListWithId = updateList.bind(null, list[0].id);
+export default function Form({list}:{list: ListsTable}) {
+  const updateListWithId = updateList.bind(null, list.id);
 
   return (
     <form action={updateListWithId}>
@@ -31,7 +31,7 @@ export default function Form({list}:{list: ListItems[]}) {
                   name="name"
                   type="text"
                   className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                  defaultValue={list[0].name}
+                  defaultValue={list.name}
                 />
                 <PencilIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
               </div>
