@@ -140,17 +140,6 @@ export default function InventoryTable({
           </table>
         </div>
       </div>
-      <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-          <button type="submit"className="rounded-md border p-2 hover:bg-gray-100">
-          <Link
-            href="/dashboard/inventory/list"
-          >
-            <ListIcon className="w-5" />
-          </Link>
-        </button>
-        </div>
-      </div>
     </div>
   );
 }

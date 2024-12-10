@@ -13,7 +13,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import { DogIcon, CatIcon, DatabaseIcon, Wallet, LucideArchive, File, PersonStanding, PersonStandingIcon, User, Home } from 'lucide-react'
+import { DogIcon, CatIcon, DatabaseIcon, Wallet, LucideArchive, File, PersonStanding, PersonStandingIcon, User, Home, List } from 'lucide-react'
 import { HomeModernIcon } from '@heroicons/react/24/outline';
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
@@ -25,6 +25,7 @@ const links = [
     icon: File,
   },
   { name: 'Inventory', href: '/dashboard/inventory', icon: LucideArchive},
+  { name: 'Lists', href: '/dashboard/inventory/lists', icon: List},
   { name: 'Pets', href: '/dashboard/pets', icon:CatIcon},
   { name: 'Money', href: '/dashboard/money', icon: Wallet },
   { name: 'Users', href: '/dashboard/users', icon: User },
