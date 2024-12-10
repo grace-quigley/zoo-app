@@ -130,7 +130,7 @@ async function seedReceipts() {
 export async function GET() {
   try {
     await client.sql`BEGIN`;
-    await seedReceipts();
+    await buildItemsCart();
     await client.sql`COMMIT`;
 
     return Response.json({ message: 'Database seeded successfully' });
@@ -138,4 +138,29 @@ export async function GET() {
     await client.sql`ROLLBACK`;
     return Response.json({ error }, { status: 500 });
   }
+}
+
+async function buildItemsCart() {
+  await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  await client.sql`
+    CREATE TABLE IF NOT EXISTS inventory_lists (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      name TEXT NOT NULL,
+      item_ids TEXT[]
+    );
+  `;
+
+  // const insertedLocations = await Promise.all(
+  //   locations.map(async (location) => {
+  //     const tags = JSON.stringify(location.tags);
+  //     // TODO: tags are going to be a string of ["#tag"] for now, need to parse when retrieving
+  //     return client.sql`
+  //       INSERT INTO locations (id, name, description, tags)
+  //       VALUES (${location.id}, ${location.name}, ${location.description}, ${tags})
+  //       ON CONFLICT (id) DO NOTHING;
+  //     `;
+  //   }),
+  // );
+
+  // return insertedLocations;
 }

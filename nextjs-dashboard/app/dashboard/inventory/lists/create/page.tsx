@@ -1,6 +1,6 @@
 import Breadcrumbs from '@/app/ui/transactions/breadcrumbs';
 import { fetchLocations, fetchUsers } from '@/app/lib/data';
-import Form from '@/app/ui/inventory/create-item-form'; 
+import Form from '@/app/ui/inventory/lists/create-list-form'; 
 export default async function Page() {
   const locations = await fetchLocations();
  
@@ -8,15 +8,15 @@ export default async function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Inventory', href: '/dashboard/inventory' },
+          { label: 'Inventory Lists', href: '/dashboard/inventory/lists' },
           {
-            label: 'Create Item',
-            href: '/dashboard/inventory/create',
+            label: 'Create List',
+            href: '/dashboard/inventory/lists/create',
             active: true,
           },
         ]}
       />
-      <Form locations={locations} />
+    <Form/>
     </main>
   );
 }

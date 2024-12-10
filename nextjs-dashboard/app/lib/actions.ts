@@ -122,8 +122,54 @@ export async function createItem(formData: FormData) {
   revalidatePath('/dashboard/inventory');
   redirect('/dashboard/inventory');
 }
+const ListFormSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+})
+const CreateList = ListFormSchema.omit({ id: true});
+const EditList = ListFormSchema.omit({ id: true});
 
+export async function createList(formData: FormData) {
+  const { name } = CreateList.parse({
+    name: formData.get('name')
+  });
+  const idData = await sql<{id: string}>`
+    INSERT INTO inventory_lists (name, item_ids)
+    VALUES (${name}, ARRAY[''])
+    RETURNING id
+  `;
+  const id = idData.rows;
+  revalidatePath('/dashboard/inventory/lists');
+  redirect('/dashboard/inventory/lists');
 
-export async function selectItem(id: string) {
-  return true;
+}
+
+export async function deleteList(id: string) {
+  await sql`
+    DELETE FROM inventory_lists
+    WHERE id = ${id}
+  `;
+  revalidatePath('/dashboard/inventory/lists');
+}
+
+export async function updateList(id: string, formData: FormData) {
+  const { name  } = EditList.parse({
+      name: formData.get('name')
+    });
+    await sql`
+      UPDATE inventory_lists
+      SET name = ${name}
+      WHERE id = ${id}
+    `;
+  revalidatePath('/dashboard/inventory/lists');
+  redirect('/dashboard/inventory/lists');
+}
+
+export async function addItemToList(id: string, itemId: string) {
+    await sql`
+      UPDATE inventory_lists
+      SET item_ids = ARRAY_APPEND(item_ids, ${itemId}))
+      WHERE id = ${id}
+    `;
+  revalidatePath('/dashboard/inventory');
 }

@@ -5,9 +5,11 @@ import { CreateTransaction } from '@/app/ui/transactions/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchFilteredItems, fetchInventoryPages } from '@/app/lib/data';
-import { CreateItem } from '@/app/ui/inventory/buttons';
-import { ItemsTable } from '@/app/lib/definitions';
+import { fetchLists, fetchFilteredItems, fetchInventoryPages } from '@/app/lib/data';
+import { CreateItem, SelectList } from '@/app/ui/inventory/buttons';
+import { ItemsTable, ListsTable } from '@/app/lib/definitions';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
  
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -20,7 +22,7 @@ export default async function Page(props: {
   const currentPage = Number(searchParams?.page) || 1;
   const totalPages = await fetchInventoryPages(query);
   const items: ItemsTable[] = await fetchFilteredItems(query, currentPage);
-
+  const lists: ListsTable[] = await fetchLists();
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
@@ -31,7 +33,7 @@ export default async function Page(props: {
         <CreateItem />
       </div>
        <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <InventoryTable items={items} />
+        <InventoryTable items={items} lists={lists}/>
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         {/* use-debounce avoids searching on every keystroke */}

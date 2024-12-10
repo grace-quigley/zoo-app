@@ -1,15 +1,29 @@
-import { db } from "@vercel/postgres";
+import { db, sql } from "@vercel/postgres";
+import { ListItems, ListsTable } from "../lib/definitions";
 
 const client = await db.connect();
 
 async function listItems() {
-	const data = await client.sql`
-    SELECT items.name, items.quantity, locations.name as location_name
-    FROM items
-    JOIN locations ON items.location_id = locations.id
-  `;
+  try {
+    const data = await sql<ListItems>`
+      SELECT 
+    inventory_lists.name,
+    inventory_lists.id,
+    items.name as item_name,
+    items.id as item_id,
+    locations.name as location_name,
+    locations.id as location_id
+    FROM inventory_lists
+    JOIN items ON items.id::text = ANY(inventory_lists.item_ids)
+    JOIN locations on locations.id = items.location_id
+    `;
 
-	return data.rows;
+    const item = data.rows;
+    return item;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch lists.');
+  }
 }
 
 export async function GET() {

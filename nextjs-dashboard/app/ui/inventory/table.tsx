@@ -1,27 +1,55 @@
 'use client'
 import { fetchFilteredItems } from '@/app/lib/data';
-import { ItemsTable } from '@/app/lib/definitions';
+import { ItemsTable, ListsTable } from '@/app/lib/definitions';
 import {  BuildList, DeleteItem, UpdateItem } from './buttons';
 import ItemRows from './item-rows';
 import { useState } from 'react';
-import { List, ListIcon, MinusCircleIcon, PlusCircleIcon } from 'lucide-react';
+import { ArrowUpRight, BadgeIcon, CheckCircleIcon, CircleAlertIcon, CircleDotIcon, CircleIcon, GlassesIcon, List, ListIcon, MinusCircleIcon, PlusCircleIcon } from 'lucide-react';
 import Link from 'next/link';
+import AddItem from './add-item';
+import { addItemToList } from '@/app/lib/actions';
 
 export default function InventoryTable({
-  items
+  items,
+  lists
 }: {
-  items: ItemsTable[]
+  items: ItemsTable[],
+  lists: ListsTable[]
 }) {
-  const [selectedItems, setSelectedItems] = useState<ItemsTable[]>([]);
-    const handleSelectionClick = (item: ItemsTable) => {
-        let newSelections;
-        if(selectedItems.filter((selectedItem) => selectedItem.item_id === item.item_id).length > 0) {
-            newSelections = selectedItems.filter((selectedItem) => selectedItem.item_id !== item.item_id)
-        } else { 
-            newSelections = [...selectedItems, item]
-        }
-        setSelectedItems(newSelections);
+  const t: { id: string, quantity: number}[] = [] 
+  const [selectedList, setSelectedList] = useState<string>('');
+  const [selectedItems, setSelectedItems] = useState<{ id: string, quantity: number}[]>([]);
+  const handleClick = (item: ItemsTable, add: boolean) => {
+    let existing = false
+    let newSelectedItems = selectedItems.flatMap((selectedItem) => { 
+      if (selectedItem.id === item.item_id) { 
+        add ?
+        selectedItem.quantity ++
+        : selectedItem.quantity --; 
+        existing = true;
+      }
+      return selectedItem;
+    })
+
+    if(!existing) { 
+      newSelectedItems = [...selectedItems, { id: item.item_id, quantity : 1}];
     }
+
+    setSelectedItems(newSelectedItems);
+  }  
+  const handleAdd = async (listId: string) => { 
+    console.log('adding to list: ', listId)
+    // const s = await addItemToList(listId, selectedItems[0].id)
+  }
+  // const handleSelectionClick = (item: ItemsTable) => {
+  //       let newSelections;
+  //       if(selectedItems.filter((selectedItem) => selectedItem.item_id === item.item_id).length > 0) {
+  //           newSelections = selectedItems.filter((selectedItem) => selectedItem.item_id !== item.item_id)
+  //       } else { 
+  //           newSelections = [...selectedItems, item]
+  //       }
+  //       setSelectedItems(newSelections);
+  //   }
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -123,22 +151,59 @@ export default function InventoryTable({
                     <div className="flex justify-end gap-3">
                       <UpdateItem id={item.item_id} />
                       <DeleteItem id={item.item_id} />
-                      <form action={() => {handleSelectionClick(item)}}> 
+                      {/* <AddItem item={item} selectedItems={selectedItems} /> */}
+                      <form action={() => {handleClick(item, false)}}> 
                         <button type="submit"className="rounded-md border p-2 hover:bg-gray-100">
                             <span className="sr-only">Select</span>
-                            {selectedItems.filter((selectedItem) => selectedItem.item_id === item.item_id).length > 0 
-                                ? (<MinusCircleIcon className="w-5" />)
-                                : (<PlusCircleIcon className="w-5"/>)
-                            }
+                                 <MinusCircleIcon className="w-5" />
                         </button>
                       </form>
+                      <button className="text-white text-sm h-9 w-9 rounded-lg border p-2 m-1 hover:bg-pink-100 bg-pink-400">
+                        {selectedItems.find((s) => s.id === item.item_id)?.quantity ?? 0}
+                      </button>
+                      <form action={() => {handleClick(item, true)}}> 
+                        <button type="submit"className="rounded-md border p-2 hover:bg-gray-100">
+                            <span className="sr-only">Select</span>
+                                 <PlusCircleIcon className="w-5" />
+                        </button>
+                      </form>
+
                     </div>
                   </td> 
                 </tr>
               ))}
             </tbody>
           </table>
+
+      <div className="mt-5 flex justify-center gap-2">
+          <select onChange={(e) => setSelectedList(e.target.value)}
+            id="list"
+            name="listId"
+            className="flex h-10 items-center rounded-lg bg-gray-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <option value="">
+              Select List
+            </option>
+            {lists.map((list) => (
+              <option key={list.id} value={list.id}>
+                {list.name}
+              </option> 
+            ))} 
+          </select>
+          <button disabled={selectedList === ''} type="submit" onClick={() => handleAdd(selectedList)} className="rounded-md border p-2 bg-green-300 hover:bg-green-100"> 
+           <CheckCircleIcon className="w-5" />
+          </button>
+          <button className="rounded-md border p-2 hover:bg-gray-100"
+          > 
+          <Link
+            href={`/dashboard/inventory/lists`}
+          >
+           <GlassesIcon className="w-5" />
+          </Link>
+          </button>
+          
         </div>
+      </div>
       </div>
     </div>
   );

@@ -25,7 +25,6 @@ const links = [
     icon: File,
   },
   { name: 'Inventory', href: '/dashboard/inventory', icon: LucideArchive},
-  { name: 'Lists', href: '/dashboard/inventory/lists', icon: List},
   { name: 'Pets', href: '/dashboard/pets', icon:CatIcon},
   { name: 'Money', href: '/dashboard/money', icon: Wallet },
   { name: 'Users', href: '/dashboard/users', icon: User },

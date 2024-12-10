@@ -1,6 +1,9 @@
 // This file contains type definitions for your data.
 // It describes the shape of the data, and what data type each property should accept.
 // For simplicity of teaching, we're manually defining these types.
+
+import { Item } from "./placeholder-data";
+
 // However, these types are generated automatically if you're using an ORM such as Prisma.
 export type User = {
   id: string;
@@ -118,3 +121,19 @@ export type TransactionForm = {
 export interface CheckedItem extends ItemsTable {
   checked: boolean
 }
+
+export type ListsTable = {
+  id: string;
+  name: string;
+  item_ids: string[];
+};
+
+
+export type ListItems = {
+  id: string;
+  name: string;
+  item_name: string;
+  item_id: string;
+  location_name: string;
+  location_id: string;
+};

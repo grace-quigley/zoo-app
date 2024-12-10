@@ -9,6 +9,8 @@ import {
   ItemsTable,
   ItemForm,
   LocationField,
+  ListsTable,
+  ListItems,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -232,6 +234,32 @@ export async function fetchItemById(id: string) {
   }
 }
 
+
+
+export async function fetchListbyId(id: string) {
+  try {
+    const data = await sql<ListItems>`
+      SELECT 
+    inventory_lists.name,
+    inventory_lists.id,
+    items.name as item_name,
+    items.id as item_id,
+    locations.name as location_name,
+    locations.id as location_id
+    FROM inventory_lists
+    JOIN items ON items.id::text = ANY(inventory_lists.item_ids)
+    JOIN locations on locations.id = items.location_id
+    WHERE inventory_lists.id = ${id}
+    `;
+
+    const item = data.rows;
+    return item;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch lists.');
+  }
+}
+
 export async function fetchUsers() {
   try {
     const data = await sql<UserField>`
@@ -298,5 +326,15 @@ export async function fetchFilteredCustomers(query: string) {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchLists() {
+  try {
+    const data = await sql<ListsTable>`SELECT * FROM inventory_lists`;
+    return data.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch lists data.');
   }
 }
