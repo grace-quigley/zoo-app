@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { db, sql } from '@vercel/postgres';
 import {
   UserField,
   CustomersTableType,
@@ -11,6 +11,8 @@ import {
   LocationField,
   ListsTable,
   ListItems,
+  ListItem,
+  ListItemResponse,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -236,29 +238,66 @@ export async function fetchItemById(id: string) {
 
 
 
-export async function fetchListbyId(id: string) {
+export async function fetchListItemsById(id: string) {
   try {
-    const data = await sql<ListItems>`
+    const client = await db.connect();
+client.sql
+    console.log(`
       SELECT 
-    inventory_lists.name,
-    inventory_lists.id,
-    items.name as item_name,
-    items.id as item_id,
-    locations.name as location_name,
-    locations.id as location_id
-    FROM inventory_lists
-    JOIN items ON items.id::text = ANY(inventory_lists.item_ids)
+      list_items.item_id,
+      list_items.list_id,
+      items.name as item_name,
+      locations.name as location_name,
+      locations.id as location_id,
+      lists.name as list_name,
+      list_items.quantity
+    FROM list_items
+    JOIN lists on list_items.list_id = lists.id
+    JOIN items ON items.id = list_items.item_id
+    JOIN locations on location
+      `)
+    const data = await sql<ListItemResponse>`
+      SELECT 
+      list_items.item_id,
+      list_items.list_id,
+      items.name as item_name,
+      locations.name as location_name,
+      locations.id as location_id,
+      lists.name as list_name,
+      list_items.quantity
+    FROM list_items
+    JOIN lists on list_items.list_id = lists.id
+    JOIN items ON items.id = list_items.item_id
     JOIN locations on locations.id = items.location_id
-    WHERE inventory_lists.id = ${id}
+    WHERE lists.id = ${id}
     `;
 
     const item = data.rows;
+    console.log(item);
     return item;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch lists.');
   }
 }
+
+export async function fetchListById(id: string) {
+  const client = await db.connect();
+  try {
+    const data = await sql<ListsTable>`
+      SELECT * from lists
+    WHERE lists.id = ${id}
+    `;
+
+    const item = data.rows;
+    console.log(item);
+    return item[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch lists.');
+  }
+}
+
 
 export async function fetchUsers() {
   try {
@@ -331,7 +370,7 @@ export async function fetchFilteredCustomers(query: string) {
 
 export async function fetchLists() {
   try {
-    const data = await sql<ListsTable>`SELECT * FROM inventory_lists`;
+    const data = await sql<ListsTable>`SELECT * FROM lists`;
     return data.rows;
   } catch (error) {
     console.error('Database Error:', error);

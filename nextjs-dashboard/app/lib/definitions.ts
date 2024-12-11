@@ -125,7 +125,6 @@ export interface CheckedItem extends ItemsTable {
 export type ListsTable = {
   id: string;
   name: string;
-  item_ids: string[];
 };
 
 
@@ -137,3 +136,20 @@ export type ListItems = {
   location_name: string;
   location_id: string;
 };
+
+export type ListItem = {
+  list_id: string;
+  item_id: string;
+  quantity: number;
+  location_id: string;
+}
+
+export type ListItemResponse = { 
+  item_name: string;
+  location_name: string;
+  list_name: string;
+  list_id: string;
+  item_id: string;
+  quantity: number;
+  location_id: string;
+}

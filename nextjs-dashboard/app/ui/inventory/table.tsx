@@ -1,13 +1,10 @@
 'use client'
-import { fetchFilteredItems, fetchListItemsById } from '@/app/lib/data';
 import { ItemsTable, ListItemResponse, ListItems, ListsTable } from '@/app/lib/definitions';
-import {  BuildList, DeleteItem, UpdateItem } from './buttons';
-import ItemRows from './item-rows';
+import {  DeleteItem, UpdateItem } from './buttons';
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, BadgeIcon, CheckCircleIcon, CircleAlertIcon, CircleDotIcon, CircleIcon, GlassesIcon, List, ListIcon, MinusCircleIcon, PlusCircleIcon } from 'lucide-react';
+import { GlassesIcon, MinusCircleIcon, PlusCircleIcon } from 'lucide-react';
 import Link from 'next/link';
-// import AddItem from './add-item';
-import { addItemToList } from '@/app/lib/actions';
+import { addItemToList, fetchListItemsById } from '@/app/lib/actions';
 
 export default function InventoryTable({
   items,
@@ -16,19 +13,25 @@ export default function InventoryTable({
   items: ItemsTable[],
   lists: ListsTable[]
 }) {
-  const t: { id: string, quantity: number}[] = [] 
   const [selectedList, setSelectedList] = useState<string>('');
   const [selectedItems, setSelectedItems] = useState<{ id: string, quantity: number}[]>([]);
   const [currListItems, setCurrListItems] = useState<ListItemResponse[]>([])
+  const [disableAdd, setDisableAdd] = useState<boolean>(selectedList === '');
   
+
   const handleListSelection = async (listId: string) => {
     console.log(listId);
     setSelectedList(listId);
-    const currItems = await fetchListItemsById(listId);
-    console.log(currItems);
-    setCurrListItems(currItems);
+    const updatedCurrItems = listId !== '' ? await fetchListItemsById(listId) : [];
+    setCurrListItems(updatedCurrItems);
+    setDisableAdd(listId === '');
   }
-  const handleClick = (item: ItemsTable, add: boolean) => {
+
+  useEffect(() => { 
+    setDisableAdd(selectedList === '');
+  }, [selectedList, currListItems, disableAdd])
+
+  const handleClick = async (item: ItemsTable, add: boolean) => {
     let existing = false
     let newSelectedItems = selectedItems.flatMap((selectedItem) => { 
       if (selectedItem.id === item.item_id) { 
@@ -43,7 +46,6 @@ export default function InventoryTable({
     if(!existing) { 
       newSelectedItems = [...selectedItems, { id: item.item_id, quantity : 1}];
     }
-
     setSelectedItems(newSelectedItems);
   }  
   // TO DO: list the current quantities when the list selection changes
@@ -55,9 +57,9 @@ export default function InventoryTable({
       quantity: item.quantity
     }))
     requests.forEach(async (request) => { 
-      console.log('hi')
       await addItemToList(request);
     })
+    setSelectedItems([]);
   }
   return (
     <div className="mt-6 flow-root">
@@ -97,10 +99,17 @@ export default function InventoryTable({
                       {item.description}
                     </p>
                   </div>
-                  <div className="flex justify-end gap-2">
-                    <UpdateItem id={item.item_id} />
-                    <DeleteItem id={item.item_id} />
-                  </div>
+                  {
+                    disableAdd ? (
+                      undefined
+                    ) : (
+                      <div className="flex justify-end gap-2">
+                        <UpdateItem id={item.item_id} />
+                        <DeleteItem id={item.item_id} />
+                      </div>
+                    )
+                  }
+                 
                 </div>
               </div>
             ))}
@@ -123,6 +132,12 @@ export default function InventoryTable({
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
                 </th>
+                { disableAdd ? ( undefined ) : ( 
+                   <th scope="col" className="px-3 py-5 font-medium">
+                   In List
+                 </th>
+                )}
+               
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -155,8 +170,11 @@ export default function InventoryTable({
                   <td className="whitespace-nowrap px-3 py-3">
                     {item.description}
                   </td>
-                  
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                  {
+                    disableAdd ? ( undefined ) 
+                    : (
+                      <>
+<td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <UpdateItem id={item.item_id} />
                       <DeleteItem id={item.item_id} />
@@ -169,9 +187,7 @@ export default function InventoryTable({
                       <button className="text-white text-sm h-9 w-9 rounded-lg border p-2 m-1 hover:bg-pink-100 bg-pink-400">
                         {selectedItems.find((s) => s.id === item.item_id)?.quantity ?? 0}
                       </button>
-                      <button className="text-white text-sm h-9 w-9 rounded-lg border p-2 m-1 hover:bg-pink-100 bg-pink-400">
-                        {currListItems.length}
-                      </button>
+                      
                       <form action={() => {handleClick(item, true)}}> 
                         <button type="submit"className="rounded-md border p-2 hover:bg-gray-100">
                             <span className="sr-only">Select</span>
@@ -181,6 +197,16 @@ export default function InventoryTable({
 
                     </div>
                   </td> 
+                  <td className="whitespace-nowrap px-3 py-3">
+                  <button className="text-white text-sm h-9 w-9 rounded-lg border p-2 m-1 hover:bg-gray-100 bg-gray-600">
+                        {currListItems.filter((currItem) => currItem.item_id === item.item_id).map((i) => i.quantity)}
+                      </button>
+                  </td>
+                  </>
+                    )
+                  }
+                  
+                  
                 </tr>
               ))}
             </tbody>
@@ -201,9 +227,14 @@ export default function InventoryTable({
               </option> 
             ))} 
           </select>
-          <button disabled={selectedList === ''} type="submit" onClick={() => handleAdd(selectedList)} className="flex rounded-md border p-2 bg-green-300 hover:bg-green-100 text-sm font-medium "> 
-           Add Items
-          </button>
+          {
+            disableAdd ? ( undefined ) : (
+              <button type="submit" onClick={() => handleAdd(selectedList)} className="flex rounded-md border p-2 bg-green-300 hover:bg-green-100 text-sm font-medium "> 
+              Add Items ({selectedItems.length})
+              </button>
+            )
+          }
+          
           <button className="rounded-md border p-2 hover:bg-gray-100"
           > 
           <Link

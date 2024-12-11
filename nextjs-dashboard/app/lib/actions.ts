@@ -3,6 +3,7 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { ListItemResponse } from './definitions';
 
 // TRANSACTION ACTIONS
 const TransactionFormSchema = z.object({
@@ -134,8 +135,8 @@ export async function createList(formData: FormData) {
     name: formData.get('name')
   });
   const idData = await sql<{id: string}>`
-    INSERT INTO inventory_lists (name, item_ids)
-    VALUES (${name}, ARRAY[''])
+    INSERT INTO lists (name)
+    VALUES (${name})
     RETURNING id
   `;
   const id = idData.rows;
@@ -146,7 +147,7 @@ export async function createList(formData: FormData) {
 
 export async function deleteList(id: string) {
   await sql`
-    DELETE FROM inventory_lists
+    DELETE FROM lists
     WHERE id = ${id}
   `;
   revalidatePath('/dashboard/inventory/lists');
@@ -157,7 +158,7 @@ export async function updateList(id: string, formData: FormData) {
       name: formData.get('name')
     });
     await sql`
-      UPDATE inventory_lists
+      UPDATE lists
       SET name = ${name}
       WHERE id = ${id}
     `;
@@ -165,11 +166,56 @@ export async function updateList(id: string, formData: FormData) {
   redirect('/dashboard/inventory/lists');
 }
 
-export async function addItemToList(id: string, itemId: string) {
-    await sql`
-      UPDATE inventory_lists
-      SET item_ids = ARRAY_APPEND(item_ids, ${itemId}))
-      WHERE id = ${id}
+export type AddItemToListRequest = { 
+  listId: string;
+  itemId: string;
+  quantity: number;
+}
+export async function addItemToList(request: AddItemToListRequest) {
+    console.log(request);
+    const existingRows =  await sql`
+      SELECT * from list_items 
+      WHERE list_id = ${request.listId} AND item_id = ${request.itemId}
     `;
+    const data = existingRows.rows;
+    if(data && data.length > 0) { 
+      await sql`
+        UPDATE list_items
+        SET quantity = quantity + ${request.quantity}
+        WHERE list_id = ${request.listId} AND item_id = ${request.itemId}
+      `
+    } else { 
+      await sql `
+        INSERT INTO list_items(list_id, item_id, quantity)
+        VALUES(${request.listId}, ${request.itemId}, ${request.quantity});
+
+      `
+    }
   revalidatePath('/dashboard/inventory');
+}
+export async function fetchListItemsById(id: string) {
+  try {
+    const data = await sql<ListItemResponse>`
+      SELECT 
+      list_items.item_id,
+      list_items.list_id,
+      items.name as item_name,
+      locations.name as location_name,
+      locations.id as location_id,
+      lists.name as list_name,
+      list_items.quantity
+    FROM list_items
+    JOIN lists on list_items.list_id = lists.id
+    JOIN items ON items.id = list_items.item_id
+    JOIN locations on locations.id = items.location_id
+    WHERE lists.id = ${id}
+    `;
+
+    const item = data.rows;
+    console.log(item);
+    return item;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch lists.');
+  }
 }
