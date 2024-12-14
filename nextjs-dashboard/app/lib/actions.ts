@@ -130,6 +130,17 @@ const ListFormSchema = z.object({
 const CreateList = ListFormSchema.omit({ id: true});
 const EditList = ListFormSchema.omit({ id: true});
 
+export async function createSimpleListByName(listName: string) {
+  const idData = await sql<{id: string}>`
+    INSERT INTO lists (name)
+    VALUES (${listName})
+    RETURNING id
+  `;
+  const id = idData.rows;
+  revalidatePath('/dashboard/inventory');
+  return id[0].id;
+}
+
 export async function createList(formData: FormData) {
   const { name } = CreateList.parse({
     name: formData.get('name')
@@ -171,7 +182,7 @@ export type AddItemToListRequest = {
   itemId: string;
   quantity: number;
 }
-export async function addItemToList(request: AddItemToListRequest) {
+export async function updateItemInList(request: AddItemToListRequest) {
     console.log(request);
     const existingRows =  await sql`
       SELECT * from list_items 
@@ -191,6 +202,11 @@ export async function addItemToList(request: AddItemToListRequest) {
 
       `
     }
+      await sql`
+      UPDATE items
+      SET quantity = quantity + ${request.quantity}
+      WHERE id = ${request.itemId}
+    `
   revalidatePath('/dashboard/inventory');
 }
 export async function fetchListItemsById(id: string) {

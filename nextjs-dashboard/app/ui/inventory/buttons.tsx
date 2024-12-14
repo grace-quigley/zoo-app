@@ -1,7 +1,7 @@
 import { deleteItem, deleteList, deleteTransaction } from '@/app/lib/actions';
 import { ItemsTable, ListsTable } from '@/app/lib/definitions';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { List, PlusCircle } from 'lucide-react';
+import { Edit2Icon, List, Pencil, PlusCircle, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 export function CreateItem() {
   return (
@@ -56,9 +56,9 @@ export function UpdateItem({ id }: { id: string }) {
   return (
     <Link
       href={`/dashboard/inventory/${id}/edit`}
-      className="rounded-md border p-2 hover:bg-gray-100"
+      className="rounded-md hover:bg-gray-100 p-2"
     >
-      <PencilIcon className="w-5" />
+      <Edit2Icon className="w-4" />
     </Link>
   );
 }
@@ -68,9 +68,9 @@ export function DeleteItem({ id }: { id: string }) {
   return (
     <>
     <form action={deleteItemWithId}>
-     <button className="rounded-md border p-2 hover:bg-gray-100">
+     <button className="rounded-md p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
+        <Trash2Icon className="w-4" />
       </button>
     </form>
     </>
@@ -94,9 +94,9 @@ export function UpdateList({ id }: { id: string }) {
   return (
     <Link
       href={`/dashboard/inventory/lists/${id}/edit`}
-      className="rounded-md border p-2 hover:bg-gray-100"
+      className="rounded-md p-2 hover:bg-gray-100"
     >
-      <PencilIcon className="w-5" />
+      <Edit2Icon className="w-4" />
     </Link>
   );
 }
@@ -106,9 +106,9 @@ export function DeleteList({ id }: { id: string }) {
   return (
     <>
     <form action={deleteListWithId}>
-     <button className="rounded-md border p-2 hover:bg-gray-100">
+     <button className="rounded-md p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
+        <Trash2Icon className="w-4" />
       </button>
     </form>
     </>
